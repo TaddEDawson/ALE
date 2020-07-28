@@ -6,9 +6,6 @@
         Define classes and subclasses for reuse in ALE from M365
         Class names are case sensitive for the generation of JSON for internal application
         Order of definition important for reuse
-
-    .EXAMPLE
-        $Entry = [AuditEntry]::New()
 #>
 
 <#
@@ -156,3 +153,125 @@ Class computer
     [System.String] $hostname = $null
     [System.String] $domain = $null
 } # End Class computer
+
+<#
+    .SYNOPSIS
+        identifiers
+    .EXAMPLE
+
+#>
+Class identifiers
+{
+
+} # End Class identifiers
+
+<#
+    .SYNOPSIS
+        identity
+    .EXAMPLE
+
+#>
+Class identity
+{
+
+} # End Class identity
+
+<#
+    .SYNOPSIS
+        item
+    .EXAMPLE
+
+#>
+Class item
+{
+
+} # End Class item
+
+<#
+    .SYNOPSIS
+        outcome
+    .EXAMPLE
+
+#>
+Class outcome
+{
+
+} # End Class outcome
+
+<#
+    .SYNOPSIS
+        page
+    .EXAMPLE
+
+#>
+Class page
+{
+
+} # End Class page
+
+<#
+    .SYNOPSIS
+        AuditEntry
+    .EXAMPLE
+
+#>
+Class AuditEntry
+{
+
+} # End Class AuditEntry
+
+<#
+    .SYNOPSIS
+        ItemEntry
+    .EXAMPLE
+
+#>
+Class ItemEntry : AuditEntry
+{
+
+} # End Class ItemEntry
+
+<#
+    .SYNOPSIS
+        PingEntry
+    .EXAMPLE
+
+#>
+Class PingEntry
+{
+
+} # End Class PingEntry
+
+<#
+    .SYNOPSIS
+        search
+    .EXAMPLE
+
+#>
+Class search
+{
+
+} # End Class search
+
+<#
+    .SYNOPSIS
+        SearchEntry
+    .EXAMPLE
+
+#>
+Class SearchEntry : AuditEntry
+{
+
+} # End Class SearchEntry
+
+<#
+    .SYNOPSIS
+        WebEntry
+    .EXAMPLE
+
+#>
+Class WebEntry : AuditEntry
+{
+
+} # End Class WebEntry
+# End Classes
