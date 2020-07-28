@@ -209,32 +209,46 @@ Class item
     .SYNOPSIS
         outcome
     .EXAMPLE
+        $outcome = [outcome]::New()
 
 #>
 Class outcome
 {
-
+    [System.Boolean] $success = $false
+    [System.Int16] $code = $null
+    [System.String] $message = "None"
 } # End Class outcome
 
 <#
     .SYNOPSIS
         page
     .EXAMPLE
+        $page = [page]::New()
 
 #>
 Class page
 {
-
+    [System.String] $url = "None"
+    [System.String] $method = "GET"
+    [System.String] $useragent = "None"
+    [System.String] $referer = "None"
+    [System.String] $contentMediaType = "text/html"
+    [System.Int64] $duration = 0
 } # End Class page
 
 <#
     .SYNOPSIS
         AuditEntry
     .EXAMPLE
+        [AuditEntry]::New()
 
 #>
 Class AuditEntry
 {
+    [System.String] $eventUuid = ([System.Guid]::NewGuid()).guid
+    [System.Object] $application = [application]::New()
+    [System.String] $eventClassification = "UNCLASSIFIED"
+    [System.String] $eventType = '{0:yyy-MM-ddTHH:mm:ssZ}' -f (Get-Date).ToUniversalTime()
 
 } # End Class AuditEntry
 
