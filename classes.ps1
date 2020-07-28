@@ -7,6 +7,23 @@
         Class names are case sensitive for the generation of JSON for internal application
         Order of definition important for reuse
 #>
+<#
+    .SYNOPSIS
+
+    .EXAMPLE
+        $Config = [Config]::New()        
+#>
+Class Config
+{
+    $appName = "TheApp"
+    $hostname = "TheHost"
+    $network = "TheNetwork"
+    $domain = "TheDomain"
+    $environmentType = "PROD"
+    $containsProdData = $true
+    $version = "0.1.0.0"
+} # End Class Config
+
 
 <#
     .SYNOPSIS
@@ -14,14 +31,6 @@
     .EXAMPLE
         # instantiate a new object of the application class
         $application = [application]::New()
-
-        # assign values to the properties
-        $application.appName = "TheApp"
-        $application.hostname = "TheHost"
-        $application.network = "TheNetwork"
-        $application.domain = "TheDomain"
-        $application.environmentType = "PROD"
-        $application.version = "0.1.0.0"
 
         # display the object
         $application
@@ -33,16 +42,18 @@
         environmentType  : PROD
         containsProdData : True
         version          : 0.1.0.0
+
+        # Review setting defaults for given environment
 #>
 Class application 
 {
-    [System.String] $appName = $null
-    [System.String] $hostname = $null
-    [System.String] $network = $null
-    [System.String] $domain = $null
-    [System.String] $environmentType = $null
-    [System.String] $containsProdData = $true
-    [System.String] $version = $null
+    [System.String] $appName = $Config.appName
+    [System.String] $hostname = $Config.hostname
+    [System.String] $network = $Config.network
+    [System.String] $domain = $Config.domain
+    [System.String] $environmentType = $Config.environmentType
+    [System.String] $containsProdData = $Config.containsProdData
+    [System.String] $version = $Config.version
 } # End Class application
 
 <#
@@ -256,54 +267,68 @@ Class AuditEntry
     .SYNOPSIS
         ItemEntry
     .EXAMPLE
+        [ItemEntry]::New() | ConvertTo-JSON -depth 3
 
 #>
 Class ItemEntry : AuditEntry
 {
-
+    [System.String] $eventType = "ITEMS"
+    [System.String] $actionType = "LISTED"
 } # End Class ItemEntry
 
 <#
     .SYNOPSIS
         PingEntry
     .EXAMPLE
-
+        [PingEntry]::New() | ConvertTo-JSON -depth 3
 #>
-Class PingEntry
+Class PingEntry : AuditEntry
 {
-
+    [System.String] $eventType = "PING"
+    [System.String] $actionType = "UPDATED"   
 } # End Class PingEntry
 
 <#
     .SYNOPSIS
         search
     .EXAMPLE
-
+        [search]::New()
 #>
 Class search
 {
-
+    [System.Array] $datasources = @()
+    [System.String] $searchText = "None Search Query"
 } # End Class search
 
 <#
     .SYNOPSIS
         SearchEntry
     .EXAMPLE
-
+        [SearchEntry]::New() | ConvertTo-JSON -depth 3
 #>
 Class SearchEntry : AuditEntry
 {
-
+    [System.String] $eventType = "SEARCHES"
+    [System.String] $actionType = "ENDED"
+    [System.Int16] $totalResultCount = 0
+    [System.Object] $search = [search]::New()
+    [System.Object] $identity = [identity]::New()
+    [System.Object] $outcome = [outcome]::New()
 } # End Class SearchEntry
 
 <#
     .SYNOPSIS
         WebEntry
     .EXAMPLE
-
+        [WebEntry]::New() | ConvertTo-JSON -depth 3
 #>
 Class WebEntry : AuditEntry
 {
-
+    [System.String] $eventType = "WEB"
+    [System.String] $actionType = "READ"
+    [System.String] $server = "None"
+    [System.Object] $identity = [identity]::New()
+    [System.Object] $page = [page]::New()
+    [System.Object] $outcome = [outcome]::New()
 } # End Class WebEntry
 # End Classes
