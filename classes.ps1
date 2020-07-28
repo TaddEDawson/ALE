@@ -15,13 +15,13 @@
 #>
 Class Config
 {
-    $appName = "TheApp"
-    $hostname = "TheHost"
-    $network = "TheNetwork"
-    $domain = "TheDomain"
-    $environmentType = "PROD"
-    $containsProdData = $true
-    $version = "0.1.0.0"
+    [System.String] $appName = "TheApp"
+    [System.String] $hostname = "TheHost"
+    [System.String] $network = "TheNetwork"
+    [System.String] $domain = "TheDomain"
+    [System.String] $environmentType = "PROD"
+    [System.Boolean] $containsProdData = $true
+    [System.String] $version = "0.1.0.0"
 } # End Class Config
 
 
