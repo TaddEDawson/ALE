@@ -158,10 +158,18 @@ Class computer
     .SYNOPSIS
         identifiers
     .EXAMPLE
+        [identifiers]::New()
 
 #>
 Class identifiers
 {
+    [System.String] $username = "None"
+    [System.String] $usernameType = "None"
+    [System.String] $distinguishedName = "None"
+    [System.String] $employeeNumber = "None"
+    [System.String] $LoginName = "None"
+    [System.String] $CWEID = "None"
+    [System.String] $Email = "None"
 
 } # End Class identifiers
 
@@ -169,22 +177,32 @@ Class identifiers
     .SYNOPSIS
         identity
     .EXAMPLE
+        $identity = [identity]::New()
 
 #>
 Class identity
 {
-
+    [System.Object] $identifiers = [identifiers]::New()
+    [System.String] $label = "None"
+    [System.Boolean] $backgroundAgent = $false
+    [System.String] $privilegelevel = "None"
 } # End Class identity
 
 <#
     .SYNOPSIS
         item
     .EXAMPLE
+        $item = [item]::New()
 
 #>
 Class item
 {
-
+    # used to determine properties for item identifiers, this is different that identity identifiers
+    $Identifiers = @{
+        "key" = "value"
+        }
+    [System.String] $label = "None"
+    [System.String] $ItemType = "None"
 } # End Class item
 
 <#
