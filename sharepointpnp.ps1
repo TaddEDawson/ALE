@@ -10,59 +10,64 @@
     Save to U:\Data\WindowsPowerShell\Modules
     Rename to U:\Data\WindowsPowerShell\Modules\sharepointpnppowershellonline.3.23.2007.1.zip
     Extract to U:\Data\WindowsPowerShell\Modules\sharepointpnppowershellonline.3.23.2007.1
+
+    $TestSiteAlias = "testSite_{0}" -f (Get-Random)
+    $TestSiteAlias
+    $PNPSite = New-PnPSite -Type TeamSite -Title $TestSiteAlias -Alias $TestSiteAlias -Verbose -IsPublic
+
+    Connect-PnPOnline -Url $PNPSite -Credentials $Credential
+
 #>
 
-Import-Module U:\Data\WindowsPowerShell\Modules\sharepointpnppowershellonline.3.23.2007.1\SharePointPnPPowerShellOnline.psd1 -Verbose
+Import-Module U:\Data\WindowsPowerShell\Modules\sharepointpnppowershellonline.3.23.2007.1\SharePointPnPPowerShellOnline.psd1 -Verbose -Force
 
 Get-Command -Module SharePointPnPPowerShellOnline | Out-GridView -PassThru | Get-Help -ShowWindow
 
 $Credential = Get-Credential -Message "Resource for M365"
 
-Connect-PnPOnline -Url https://falconcrossing.sharepoint.com/sites/AutomatedAuditLayer -Credentials $Credential
+$SiteUrl = "https://falconcrossing.sharepoint.com/sites/testSite_234128018"
 
+Connect-PnPOnline -Url $SiteUrl -Credentials $Credential
+<#
+Connect-PnPOnline -Url https://falconcrossing.sharepoint.com/sites/AutomatedAuditLayer -Credentials $Credential
 Connect-PnPOnline -Url https://falconcrossing-admin.sharepoint.com/ -Credentials $Credential
+#>
 
 $PNPSite = Get-PnPSite 
 
 Get-PnPConnection
 
-New-PnPList -Title "BulkUploadTest" -Template DocumentLibrary
+$ListTitle = "BulkUploadTest"
 
-Add-PnPFile -Path .\powershell.png -Folder BulkUploadTest -Verbose
+if(Get-PNPList $ListTitle)
+{
+    "$ListTile exists"
+}
+else
+{
+    "$ListTitle does not exist, creating"
+
+    New-PnPList -Title $ListTitle -Template DocumentLibrary -Verbose
+}
 
 Set-Location U:\Data\VSCode\ALE
 
-New-Item -Path Bulk -ItemType Directory
-
-Get-ChildItem U:\ -Recurse | Select FullName, LastAccessTime, Length | Out-File .\Bulk\File1.txt
 
 $start = Get-Date
-Add-PnPFile -Path .\Bulk\File1.txt -Folder BulkUploadTest -NewFileName ("file_{0}.txt" -f (Get-Random)) -UseWebDav
+Add-PnPFile -Path U:\Data\VSCode\ALE\Bulk\TeamsHelp.pdf -Folder $ListTitle -NewFileName ("file_{0}.pdf" -f (Get-Random)) -UseWebDav
 $finish = Get-Date
 ($finish - $start).TotalMilliseconds
 
-Measure-PnPResponseTime -Count 100 -Timeout 20
 
-$TestSiteAlias = "testSite_{0}" -f (Get-Random)
-$TestSiteAlias
-$PNPSite = New-PnPSite -Type TeamSite -Title $TestSiteAlias -Alias $TestSiteAlias -Verbose -IsPublic
 
-Connect-PnPOnline -Url $PNPSite -Credentials $Credential
-
-New-PnPList -Title "BulkUploadTest" -Template DocumentLibrary
-$start = Get-Date
-Add-PnPFile -Path .\Bulk\File1.txt -Folder BulkUploadTest -NewFileName ("file_{0}.txt" -f (Get-Random)) -UseWebDav
-$finish = Get-Date
-($finish - $start).TotalMilliseconds
-
-function Test-FileUpload 
+function Test-FileUpload
 {
     <#
         .SYNOPSIS
         Upload a file using Add-PNPFile
 
         .EXAMPLE
-            Test-FileUpload -FilePath ".\Bulk\TeamsHelp.pdf" -Copies 10 -SiteUrl "https://falconcrossing.sharepoint.com/sites/testSite_234128018" -ListTitle "BulkUploadTest" -UseWebDav -Verbose
+            Test-FileUpload -FilePath "U:\Data\VSCode\ALE\Bulk\TeamsHelp.pdf" -Copies 15 -SiteUrl "https://falconcrossing.sharepoint.com/sites/testSite_234128018" -ListTitle "BulkUploadTest" -UseWebDav -Verbose
 
     #>
     [CmdletBinding()]
@@ -82,6 +87,16 @@ function Test-FileUpload
     )
     process
     {
+        $ResultObjectProperties = [Ordered] @{
+                            Copy = $null
+                            Start = $null
+                            Finish = $null
+                            Name = $null
+                            SizeMB = $null
+                            Duration = $null
+                            MBytePerSec = $null
+                        }
+
         # Connect to the PNP site
         $Results = @()
 
@@ -96,6 +111,17 @@ function Test-FileUpload
                 $Finish = Get-Date
                 $Duration = ($Finish - $Start).Totalseconds
                 $MBytePerSec = $File.Length/1MB/$Duration
+
+                $Result = New-Object -TypeName PSObject -Property $ResultObjectProperties
+                $Result.Copy = $i
+                $Result.Start = $Start
+                $Result.Finish = $Finish
+                $Result.Name = $File.FullName
+                $Result.SizeMB = "{0:N2}" -f ($File.Length/1MB)
+                $Result.Duration = "{0:N2}" -f $Duration
+                $Result.MBytePerSec = "{0:N2}" -f $MBytePerSec
+
+                $Results += $Result
             }
         }
         catch
